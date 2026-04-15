@@ -1,6 +1,5 @@
 import { Github, ExternalLink, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -32,76 +31,64 @@ export function ProjectCard({
   demo,
 }: ProjectCardProps) {
   return (
-    <Card className="group flex h-full flex-col justify-between border-border/70 bg-card/80 transition hover:-translate-y-1 hover:border-primary/70 hover:shadow-lg">
-      <CardHeader className="space-y-3">
+    <Card className="project-terminal-card group flex h-full flex-col justify-between">
+      <CardHeader className="space-y-4">
         <div className="flex items-start justify-between gap-3">
-          <CardTitle className="hover-text-lift text-lg font-semibold tracking-tight">
+          <CardTitle className="font-hacker text-lg font-semibold uppercase tracking-[0.08em] text-primary">
             {title}
           </CardTitle>
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-primary">
+          <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-primary">
             <Sparkles className="h-3 w-3" />
-            Agentic
+            live
           </span>
         </div>
-        <CardDescription className="hover-text-lift text-sm text-muted-foreground">
+        <CardDescription className="text-sm leading-7 text-foreground/65">
           {description}
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        <div className="flex flex-wrap gap-1.5">
+      <CardContent className="space-y-5">
+        <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
             <Badge
               key={tag}
               variant="outline"
-              className="border-primary/30 bg-primary/5 text-[11px] uppercase tracking-wide text-primary"
+              className="border-primary/20 bg-transparent font-hacker text-[10px] uppercase tracking-[0.22em] text-primary"
             >
               {tag}
             </Badge>
           ))}
         </div>
-        <div className="space-y-1 text-xs text-muted-foreground">
+        <div className="space-y-2 text-xs leading-6 text-foreground/62">
           <p>
-            <span className="font-semibold text-foreground">Stack:</span>{" "}
+            <span className="font-hacker uppercase tracking-[0.18em] text-primary">
+              stack:
+            </span>{" "}
             {stack}
           </p>
           <p>
-            <span className="font-semibold text-foreground">Impact:</span>{" "}
+            <span className="font-hacker uppercase tracking-[0.18em] text-primary">
+              impact:
+            </span>{" "}
             {impact}
           </p>
         </div>
       </CardContent>
 
-      <CardFooter className="mt-auto flex items-center justify-between gap-2 pt-2">
-        <div className="flex gap-2">
-          {github && (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="h-8 gap-1 text-xs"
-            >
-              <a href={github} target="_blank" rel="noreferrer">
-                <Github className="h-3.5 w-3.5" />
-                View on GitHub
-              </a>
-            </Button>
-          )}
-          {demo && (
-            <Button
-              asChild
-              size="sm"
-              className="h-8 gap-1 text-xs"
-            >
-              <a href={demo} target="_blank" rel="noreferrer">
-                <ExternalLink className="h-3.5 w-3.5" />
-                Live Demo
-              </a>
-            </Button>
-          )}
-        </div>
+      <CardFooter className="mt-auto flex items-center gap-2 pt-2">
+        {github && (
+          <a href={github} target="_blank" rel="noreferrer" className="terminal-card-button">
+            <Github className="h-3.5 w-3.5" />
+            GitHub
+          </a>
+        )}
+        {demo && (
+          <a href={demo} target="_blank" rel="noreferrer" className="terminal-card-button">
+            <ExternalLink className="h-3.5 w-3.5" />
+            Demo
+          </a>
+        )}
       </CardFooter>
     </Card>
   );
 }
-

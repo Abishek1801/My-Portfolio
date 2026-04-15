@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { IntroProvider } from "@/contexts/intro-context";
 import { Header } from "@/components/header";
 
 const geistSans = Geist({
@@ -37,14 +36,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${shareTechMono.variable}`}>
         <ThemeProvider>
-          <IntroProvider>
-            <div className="min-h-screen bg-background text-foreground">
-              <Header />
-              <main className="mx-auto max-w-6xl px-4 pb-16 pt-[4.5rem] sm:px-6 lg:px-8">
-                {children}
-              </main>
-            </div>
-          </IntroProvider>
+          <div className="min-h-screen bg-background text-foreground">
+            <Header />
+            <main>
+              {children}
+            </main>
+          </div>
         </ThemeProvider>
       </body>
     </html>

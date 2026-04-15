@@ -1,48 +1,25 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ProjectCard, ProjectTag } from "@/components/project-card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { HeroIntro } from "@/components/hero-intro";
-import { useIntro } from "@/contexts/intro-context";
 
-const fadeInUp = {
+const revealUp = {
   hidden: { opacity: 0, y: 24 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.6,
+      duration: 0.55,
       delay,
       ease: [0.16, 1, 0.3, 1],
     },
   }),
 };
 
-const popIn = {
-  hidden: { opacity: 0, scale: 0.9, y: 12 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      duration: 0.7,
-      ease: [0.16, 1, 0.3, 1],
-    },
-  },
-};
-
-const sectionTitleClasses =
-  "hover-text-lift text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground";
-
-const sectionHeadingClasses =
-  "hover-text-lift text-2xl font-semibold tracking-tight sm:text-3xl";
-
-interface Project {
+type Project = {
   title: string;
   description: string;
   tags: ProjectTag[];
@@ -50,488 +27,417 @@ interface Project {
   impact: string;
   github?: string;
   demo?: string;
-}
+};
 
 const projects: Project[] = [
   {
-    title: "Elasticsearch + Flask Search Pipeline",
+    title: "search-pipeline.exe",
     description:
-      "Full-text search pipeline with indexing, query tuning, and low-latency retrieval for real product discovery.",
+      "Full-text retrieval system built for fast indexing, tuned queries, and low-latency product discovery.",
     tags: ["Full-Stack"],
-    stack: "Elasticsearch, Flask, Python, Docker, Kibana",
+    stack: "Elasticsearch / Flask / Python / Docker / Kibana",
     impact:
-      "Designed for scalable indexing + fast search with relevance-focused iteration.",
+      "Improved search quality through relevance-focused iteration and scalable indexing design.",
     github: "#",
     demo: "#",
   },
   {
-    title: "Stance Detection (NLP Model)",
+    title: "stance-detection.model",
     description:
-      "Stance detection model for classifying perspective and intent across claims, topics, and short-form text.",
+      "NLP workflow for classifying stance, perspective, and intent across claims and short-form text.",
     tags: ["Full-Stack"],
-    stack: "Python, PyTorch/TensorFlow, Transformers, Scikit-learn",
+    stack: "Python / Transformers / PyTorch / Scikit-learn",
     impact:
-      "Built training + evaluation loop with clean metrics and error analysis for iteration.",
+      "Built clean training, evaluation, and error-analysis loops for faster model iteration.",
     github: "#",
     demo: "#",
   },
   {
-    title: "ASU Sol HPC Cluster Workflows",
+    title: "asu-sol-cluster.ops",
     description:
-      "Cluster-scale ML experimentation: training, evaluation, and job orchestration designed for reproducibility and throughput.",
+      "HPC-scale ML experimentation designed around throughput, reproducibility, checkpointing, and debugging.",
     tags: ["Agentic AI", "Computer Vision"],
-    stack: "Slurm, PyTorch, CUDA, Singularity, Bash, tmux",
+    stack: "Slurm / PyTorch / CUDA / Singularity / Bash / tmux",
     impact:
-      "Built reliable training/eval workflows on shared HPC infrastructure with checkpointing and cluster-aware debugging.",
+      "Made shared-cluster training workflows reliable for long-running research workloads.",
     github: "#",
     demo: "#",
   },
 ];
 
+const notes = [
+  {
+    label: "agent-logs.md",
+    title: "Practical tool-using agents",
+    body: "Why structured tool traces matter more than raw model size when you need debuggability.",
+  },
+  {
+    label: "retrieval.txt",
+    title: "When BM25 beats embeddings",
+    body: "A pragmatic retrieval stack for query-aware routing, offline evaluation, and hybrid search quality.",
+  },
+  {
+    label: "cluster-handbook.sh",
+    title: "Running LLM workloads on shared infrastructure",
+    body: "Lessons from fitting agent-style workloads onto schedulers without losing observability.",
+  },
+];
+
+const skills = [
+  {
+    name: "languages",
+    value: "Python, C/C++, Java, SQL, Bash, React.js",
+  },
+  {
+    name: "ml_stack",
+    value: "PyTorch, TensorFlow, Transformers, OpenCV, YOLO, Scikit-learn",
+  },
+  {
+    name: "systems",
+    value: "Docker, Linux CLI, Git/GitHub, PostgreSQL, MySQL, Postman",
+  },
+];
+
+function TerminalSection({
+  id,
+  prompt,
+  title,
+  children,
+}: {
+  id: string;
+  prompt: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className="scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={revealUp}
+          className="terminal-shell overflow-hidden"
+        >
+          <div className="terminal-topbar">
+            <div className="terminal-lights">
+              <span />
+              <span />
+              <span />
+            </div>
+            <div className="terminal-path">
+              <span className="text-primary">abi@portfolio</span>
+              <span className="text-foreground/50">:</span>
+              <span className="text-foreground/70">~/{id}</span>
+            </div>
+          </div>
+          <div className="terminal-body">
+            <p className="terminal-command">
+              <span className="text-primary">abi@portfolio</span>
+              <span className="text-foreground/50">:~$</span> {prompt}
+            </p>
+            <div className="mt-4">
+              <p className="terminal-section-label">{title}</p>
+              {children}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
-  const [introOpen, setIntroOpen] = useState(true);
-  const [contentReady, setContentReady] = useState(false);
-  const { setIntroClosed } = useIntro();
-
-  useEffect(() => {
-    // Ensures a blank initial screen on load.
-    setIntroOpen(true);
-    setContentReady(false);
-  }, []);
-
   const handleContactSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (typeof window !== "undefined") {
-      window.alert("Thanks for reaching out. I’ll get back to you shortly.");
+      window.alert("Transmission received. I’ll get back to you shortly.");
     }
   };
 
   return (
-    <div className="relative space-y-20 pb-4 sm:space-y-24">
-      <HeroIntro
-        open={introOpen}
-        onDone={() => {
-          setIntroOpen(false);
-          setContentReady(true);
-          setIntroClosed();
-        }}
-      />
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={contentReady ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        className="space-y-20 sm:space-y-24"
-      >
-      {/* Hero — Wall of Portfolios–style: headline left, profile card right */}
-      <section className="grid min-h-[78vh] grid-cols-1 items-center gap-12 md:grid-cols-[1fr_minmax(320px,0.9fr)]">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          className="space-y-6"
-        >
-          <motion.h1
+    <div className="relative pb-12">
+      <section className="px-4 pb-8 pt-28 sm:px-6 lg:px-8 lg:pt-32">
+        <div className="mx-auto max-w-6xl">
+          <motion.div
             initial="hidden"
             animate="visible"
-            variants={popIn}
-            className="text-5xl font-black leading-[0.95] tracking-tight text-slate-100 sm:text-6xl md:text-7xl"
+            variants={revealUp}
+            className="terminal-shell hero-shell overflow-hidden"
           >
-            <span className="hover-text-lift inline-block bg-gradient-to-b from-slate-50 to-slate-400/70 bg-clip-text text-transparent">
-              Hey, I&apos;m Abishek.
-            </span>
-          </motion.h1>
-          <p className="hover-text-lift max-w-xl text-sm leading-relaxed text-slate-400 sm:text-base">
-            ML & Agentic AI developer focused on building intelligent systems—from
-            search pipelines and NLP models to HPC-scale experimentation at ASU.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              asChild
-              size="md"
-              className="hover-text-lift rounded-full px-5 text-sm"
-            >
-              <a href="#projects">View portfolio</a>
-            </Button>
-            <Button
-              asChild
-              size="md"
-              variant="outline"
-              className="hover-text-lift rounded-full border-slate-600 px-5 text-sm text-slate-300 hover:bg-slate-800/60"
-            >
-              <a href="#contact">Message</a>
-            </Button>
-          </div>
-        </motion.div>
+            <div className="terminal-topbar">
+              <div className="terminal-lights">
+                <span />
+                <span />
+                <span />
+              </div>
+              <div className="terminal-path">
+                <span className="text-primary">abi@portfolio</span>
+                <span className="text-foreground/50">:</span>
+                <span className="text-foreground/70">~/boot</span>
+              </div>
+            </div>
 
-        {/* Profile card — reference: Edin Le profile block */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          custom={0.15}
-          variants={fadeInUp}
-          className="flex justify-center md:justify-end"
-        >
-          <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-900/50 shadow-xl">
-            <div className="flex items-center gap-4 border-b border-slate-700/60 p-5">
-              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-slate-600/60 bg-slate-800">
-                <Image
-                  src="/abi_profile.jpg"
-                  alt="Abishek"
-                  fill
-                  sizes="80px"
-                  className="object-cover"
-                />
+            <div className="terminal-body grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+              <div className="space-y-6">
+                <motion.p variants={revealUp} custom={0.04} className="terminal-command">
+                  <span className="text-primary">abi@portfolio</span>
+                  <span className="text-foreground/50">:~$</span> ./launch_profile.sh
+                </motion.p>
+
+                <motion.div variants={revealUp} custom={0.1} className="space-y-4">
+                  <p className="font-hacker text-sm uppercase tracking-[0.4em] text-primary/70">
+                    System Online
+                  </p>
+                  <h1 className="font-hacker text-5xl font-bold uppercase leading-[0.92] tracking-[-0.04em] text-primary sm:text-7xl lg:text-[6.5rem]">
+                    Hey, I&apos;m
+                    <br />
+                    Abishek
+                  </h1>
+                  <p className="max-w-2xl text-sm leading-8 text-foreground/72 sm:text-base">
+                    ML and agentic AI developer building search systems, NLP
+                    pipelines, automation workflows, and research-grade training
+                    setups. I like clean interfaces, observable systems, and code
+                    that survives real-world constraints.
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  variants={revealUp}
+                  custom={0.16}
+                  className="grid gap-4 sm:grid-cols-3"
+                >
+                  <div className="terminal-stat">
+                    <p>status</p>
+                    <strong>available</strong>
+                  </div>
+                  <div className="terminal-stat">
+                    <p>mode</p>
+                    <strong>building</strong>
+                  </div>
+                  <div className="terminal-stat">
+                    <p>location</p>
+                    <strong>asu / us</strong>
+                  </div>
+                </motion.div>
               </div>
-              <div className="min-w-0 flex-1">
-                <h2 className="hover-text-lift truncate text-lg font-semibold tracking-tight text-slate-100">
-                  Abishek Prakash Nagaram
-                </h2>
-                <p className="hover-text-lift text-xs text-slate-400">@ Abi</p>
-                <p className="hover-text-lift mt-0.5 text-xs text-slate-500">United States</p>
-              </div>
-            </div>
-            <div className="space-y-4 p-5">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                  Role
-                </p>
-                <p className="hover-text-lift mt-1 text-sm font-medium text-slate-200">
-                  ML & Agentic AI Developer · M.S. Student
-                </p>
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                  About
-                </p>
-                <p className="hover-text-lift mt-1 text-xs leading-relaxed text-slate-400">
-                  Master&apos;s in Computer Science at ASU. Experience in ML, system
-                  architecture, and full-stack development—Computer Vision,
-                  automation, and scalable pipelines.
-                </p>
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                  Experience includes
-                </p>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  <span className="rounded-md bg-slate-800/80 px-2 py-1 text-[11px] text-slate-300">
-                    Python · ML
-                  </span>
-                  <span className="rounded-md bg-slate-800/80 px-2 py-1 text-[11px] text-slate-300">
-                    Agentic AI
-                  </span>
-                  <span className="rounded-md bg-slate-800/80 px-2 py-1 text-[11px] text-slate-300">
-                    Full-Stack
-                  </span>
-                  <span className="rounded-md bg-slate-800/80 px-2 py-1 text-[11px] text-slate-300">
-                    ASU Sol HPC
-                  </span>
+
+              <motion.div
+                variants={revealUp}
+                custom={0.2}
+                className="terminal-ascii-panel"
+              >
+                <div className="terminal-ascii-header">
+                  <span>identity.map</span>
+                  <span>secure-session</span>
                 </div>
-              </div>
+                <div className="terminal-identity-scene">
+                  <div className="terminal-figure" aria-hidden>
+                    <div className="terminal-figure-head" />
+                    <div className="terminal-figure-body" />
+                    <div className="terminal-figure-arm terminal-figure-arm-left" />
+                    <div className="terminal-figure-arm terminal-figure-arm-right" />
+                    <div className="terminal-figure-laptop">
+                      <div className="terminal-figure-screen">
+                        <div className="terminal-code-line terminal-code-line-1" />
+                        <div className="terminal-code-line terminal-code-line-2" />
+                        <div className="terminal-code-line terminal-code-line-3" />
+                        <div className="terminal-code-line terminal-code-line-4" />
+                      </div>
+                      <div className="terminal-figure-base" />
+                    </div>
+                  </div>
+                  <div className="terminal-identity-meta">
+                    <p>
+                      <span className="text-primary">user</span>: abi
+                    </p>
+                    <p>
+                      <span className="text-primary">role</span>: ml_agentic_ai_dev
+                    </p>
+                    <p>
+                      <span className="text-primary">focus</span>: search / nlp / systems
+                    </p>
+                    <p>
+                      <span className="text-primary">status</span>: actively_coding
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </section>
 
-      {/* Portfolio — reference: Wall of Portfolios case studies */}
-      <motion.section
+      <TerminalSection
         id="projects"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeInUp}
-        className="space-y-6"
+        prompt="ls ./projects --highlight"
+        title="[ PROJECT INDEX ]"
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className={sectionTitleClasses}>Portfolio</p>
-            <h2 className={sectionHeadingClasses}>
-              Projects & case studies
-            </h2>
-          </div>
-          <p className="max-w-md text-xs text-muted-foreground sm:text-sm">
-            End-to-end work in search, NLP, and ML systems—from pipelines to
-            HPC workflows.
-          </p>
-        </div>
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/68">
+          Selected builds across retrieval, modeling, and infrastructure.
+        </p>
+        <div className="mt-8 grid gap-5 lg:grid-cols-3">
           {projects.map((project, index) => (
             <motion.div
               key={project.title}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              custom={0.05 * index}
-              variants={fadeInUp}
+              variants={revealUp}
+              custom={0.06 * index}
             >
               <ProjectCard {...project} />
             </motion.div>
           ))}
         </div>
-      </motion.section>
+      </TerminalSection>
 
-      {/* Experience */}
-      <motion.section
+      <TerminalSection
         id="experience"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeInUp}
-        className="space-y-6"
+        prompt="cat ./experience.log"
+        title="[ EXECUTION HISTORY ]"
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className={sectionTitleClasses}>Experience</p>
-            <h2 className={sectionHeadingClasses}>
-              Internship + research-driven building.
-            </h2>
-          </div>
+        <div className="mt-6 space-y-4">
+          {[
+            {
+              time: "2025.02 -> 2025.05",
+              role: "Python Developer Intern / Jireh Software Solutions",
+              body:
+                "Built an AI-based work tracking summarizer using OCR and image similarity detection, with Django features and deployment automation.",
+            },
+            {
+              time: "2025.08 -> present",
+              role: "M.S. Computer Science / Arizona State University",
+              body:
+                "Working across machine learning, deep learning, algorithms, systems, and research workflows.",
+            },
+            {
+              time: "2025.08 -> present",
+              role: "AI Society Member / Tempe",
+              body:
+                "Staying active in practical AI discussions, events, and modern agentic-system thinking.",
+            },
+          ].map((item, index) => (
+            <motion.div
+              key={item.role}
+              variants={revealUp}
+              custom={0.05 * index}
+              className="terminal-log-row"
+            >
+              <p className="terminal-log-time">{item.time}</p>
+              <h3 className="terminal-log-role">{item.role}</h3>
+              <p className="terminal-log-body">{item.body}</p>
+            </motion.div>
+          ))}
         </div>
-        <ol className="relative space-y-8 border-l border-border/60 pl-4 text-sm sm:pl-6">
-          <li className="space-y-1">
-            <div className="absolute -left-[7px] mt-1 h-3 w-3 rounded-full border border-background bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.3)]" />
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="font-medium">
-                Python Developer Intern · Jireh Software Solutions (Bangalore)
-              </span>
-              <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">
-                Python · CV · Automation
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Feb 2025 – May 2025
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground sm:text-sm">
-              Built an AI-driven work tracking summarizer using OCR + image
-              similarity detection; developed full-stack features (Django) and
-              automated deployment workflows with Linux + Bash.
-            </p>
-          </li>
-          <li className="space-y-1">
-            <div className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border border-background bg-sky-400/90" />
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="font-medium">M.S. Computer Science · ASU</span>
-              <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">
-                Expected May 2027
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Aug 2025 – Present
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground sm:text-sm">
-              Relevant coursework: Data Structures, Design & Analysis of
-              Algorithms, Machine Learning, Deep Learning, Computer Networks,
-              Sequence Networks & GANs.
-            </p>
-          </li>
-          <li className="space-y-1">
-            <div className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border border-background bg-indigo-400/90" />
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="font-medium">AI Society · Member (Tempe)</span>
-              <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">
-                Community
-              </span>
-              <span className="text-xs text-muted-foreground">
-                Aug 2025 – Present
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground sm:text-sm">
-              Participating in ML/AI events and discussions, staying current on
-              agentic systems and modern ML practice.
-            </p>
-          </li>
-        </ol>
-      </motion.section>
+      </TerminalSection>
 
-      {/* Skills */}
-      <motion.section
+      <TerminalSection
         id="skills"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeInUp}
-        className="space-y-6"
+        prompt="printenv CORE_SKILLS"
+        title="[ STACK VARIABLES ]"
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className={sectionTitleClasses}>Skills</p>
-            <h2 className={sectionHeadingClasses}>
-              Tools I use to ship ML systems.
-            </h2>
-          </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {skills.map((skill, index) => (
+            <motion.div
+              key={skill.name}
+              variants={revealUp}
+              custom={0.05 * index}
+              className="terminal-env-card"
+            >
+              <p className="terminal-env-key">{skill.name}=</p>
+              <p className="terminal-env-value">{skill.value}</p>
+            </motion.div>
+          ))}
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-border/70 bg-card/80 p-5">
-            <p className="text-xs font-semibold text-foreground">Programming</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Python, C/C++, Java, SQL, Bash, React.js
-            </p>
-          </div>
-          <div className="rounded-2xl border border-border/70 bg-card/80 p-5">
-            <p className="text-xs font-semibold text-foreground">
-              ML / CV / GenAI
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              PyTorch, TensorFlow, CNNs, OpenCV, YOLO, GPT, Scikit-learn
-            </p>
-          </div>
-          <div className="rounded-2xl border border-border/70 bg-card/80 p-5">
-            <p className="text-xs font-semibold text-foreground">DevOps</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Docker, Linux CLI, Git/GitHub, Postman, PostgreSQL/MySQL
-            </p>
-          </div>
-        </div>
-      </motion.section>
+      </TerminalSection>
 
-      {/* Research / Blog */}
-      <motion.section
+      <TerminalSection
         id="research"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeInUp}
-        className="space-y-6"
+        prompt="tail -n 3 ./notes/*.md"
+        title="[ RECENT NOTES ]"
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className={sectionTitleClasses}>Research & Notes</p>
-            <h2 className={sectionHeadingClasses}>
-              From papers to practical patterns.
-            </h2>
-          </div>
-          <p className="max-w-md text-xs text-muted-foreground sm:text-sm">
-            Short, implementation-minded notes on AI and systems papers—focused
-            on what you’d actually build with the ideas.
-          </p>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {notes.map((note, index) => (
+            <motion.article
+              key={note.label}
+              variants={revealUp}
+              custom={0.05 * index}
+              className="terminal-note-card"
+            >
+              <p className="terminal-note-label">{note.label}</p>
+              <h3 className="terminal-note-title">{note.title}</h3>
+              <p className="terminal-note-body">{note.body}</p>
+            </motion.article>
+          ))}
         </div>
-        <div className="grid gap-5 md:grid-cols-3">
-          <div className="space-y-2 rounded-xl border border-border/70 bg-card/80 p-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Tool use & planning
-            </p>
-            <h3 className="hover-text-lift text-sm font-semibold">
-              ReAct, Toolformer, and practical tool-using agents
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Why reasoning + acting loops matter more than raw model size, and
-              how to structure tools and logs for debuggability.
-            </p>
-          </div>
-          <div className="space-y-2 rounded-xl border border-border/70 bg-card/80 p-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Retrieval & evaluation
-            </p>
-            <h3 className="hover-text-lift text-sm font-semibold">
-              RAG triage: when BM25 beats embeddings
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              A pragmatic framework for mixing lexical + dense retrieval, with
-              query-aware routing and offline evaluation loops.
-            </p>
-          </div>
-          <div className="space-y-2 rounded-xl border border-border/70 bg-card/80 p-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Systems & infra
-            </p>
-            <h3 className="hover-text-lift text-sm font-semibold">
-              Running LLM workloads on shared clusters
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Lessons from fitting agent workloads onto HPC schedulers without
-              sacrificing observability or iteration speed.
-            </p>
-          </div>
-        </div>
-      </motion.section>
+      </TerminalSection>
 
-      {/* Contact — Message CTA like Wall of Portfolios */}
-      <motion.section
+      <TerminalSection
         id="contact"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeInUp}
-        className="space-y-6 rounded-2xl border border-slate-700/60 bg-slate-900/40 p-5 sm:p-6 lg:p-7"
+        prompt="send_message --secure"
+        title="[ OPEN CHANNEL ]"
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className={sectionTitleClasses}>Get in touch</p>
-            <h2 className={sectionHeadingClasses}>
-              Message
-            </h2>
-            <p className="mt-2 max-w-xl text-xs text-muted-foreground sm:text-sm">
-              Interested in ML, agentic systems, or research-driven product
-              work? Share what you're building.
+        <div className="mt-6 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+          <div className="space-y-4">
+            <p className="text-sm leading-7 text-foreground/68">
+              If you&apos;re building in ML, agentic systems, automation, or
+              research-heavy product spaces, send a message and let&apos;s talk.
             </p>
+            <div className="terminal-contact-meta">
+              <p>response_window=24_48_hours</p>
+              <p>preferred_topics=ml,nlp,systems,agents</p>
+              <p>signal_quality=high</p>
+            </div>
           </div>
+
+          <motion.form
+            onSubmit={handleContactSubmit}
+            variants={revealUp}
+            custom={0.08}
+            className="terminal-form grid gap-4 sm:grid-cols-2"
+          >
+            <div className="space-y-2">
+              <label htmlFor="name" className="terminal-label">
+                name
+              </label>
+              <Input
+                id="name"
+                name="name"
+                placeholder="ada_lovelace"
+                autoComplete="name"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="email" className="terminal-label">
+                email
+              </label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@company.com"
+                autoComplete="email"
+                required
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <label htmlFor="context" className="terminal-label">
+                message
+              </label>
+              <Textarea
+                id="context"
+                name="context"
+                placeholder="describe your build, system, or research problem..."
+                required
+              />
+            </div>
+            <div className="sm:col-span-2 flex justify-end">
+              <Button type="submit" size="md" className="terminal-submit">
+                Execute Transmission
+              </Button>
+            </div>
+          </motion.form>
         </div>
-        <form
-          onSubmit={handleContactSubmit}
-          className="grid gap-4 sm:grid-cols-2 sm:gap-5"
-        >
-          <div className="space-y-1.5">
-            <label
-              htmlFor="name"
-              className="text-xs font-medium text-foreground"
-            >
-              Name
-            </label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="Ada Lovelace"
-              autoComplete="name"
-              required
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label
-              htmlFor="email"
-              className="text-xs font-medium text-foreground"
-            >
-              Email
-            </label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@company.com"
-              autoComplete="email"
-              required
-            />
-          </div>
-          <div className="space-y-1.5 sm:col-span-2">
-            <label
-              htmlFor="context"
-              className="text-xs font-medium text-foreground"
-            >
-              What would you like to build?
-            </label>
-            <Textarea
-              id="context"
-              name="context"
-              placeholder="Share your current stack, problem, or research question. Links welcome."
-              required
-            />
-          </div>
-          <div className="flex flex-col items-start justify-between gap-3 sm:col-span-2 sm:flex-row sm:items-center">
-            <p className="text-[11px] text-muted-foreground">
-              I usually respond within 24–48 hours. No recruiters for purely
-              non-technical roles, please.
-            </p>
-            <Button
-              type="submit"
-              size="md"
-              className="hover-text-lift h-9 rounded-full px-5 text-sm"
-            >
-              Send message
-            </Button>
-          </div>
-        </form>
-      </motion.section>
-      </motion.div>
+      </TerminalSection>
     </div>
   );
 }
