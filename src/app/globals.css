@@ -1,26 +1,151 @@
 @import "tailwindcss";
 
+/* Design tokens (shadcn-style) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+
+  --primary: 222.2 84% 56%;
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+
+  --accent: 222.2 84% 60%;
+  --accent-foreground: 210 40% 98%;
+
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 222.2 84% 56%;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  /* Matte black target: #0a0a0a */
+  --background: 0 0% 3.9%;
+  --foreground: 210 40% 98%;
+
+  --card: 222.2 84% 7.5%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222.2 84% 7.5%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-hacker: var(--font-share-tech);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-background text-foreground antialiased;
+}
+
+/* Section anchors: stop scroll so heading sits just below fixed nav */
+[id="projects"],
+[id="experience"],
+[id="skills"],
+[id="research"],
+[id="contact"] {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Text hover: slight enlarge + subtle vibrate; state stays while cursor is over */
+@keyframes text-vibrate {
+  0%,
+  100% {
+    transform: translateX(0) scale(1.02);
+  }
+  25% {
+    transform: translateX(-0.5px) scale(1.02);
+  }
+  50% {
+    transform: translateX(0.5px) scale(1.02);
+  }
+  75% {
+    transform: translateX(-0.3px) scale(1.02);
+  }
+}
+
+.hover-text-lift {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.hover-text-lift:hover {
+  transform: scale(1.02);
+  animation: text-vibrate 0.4s ease-in-out;
+}
+
+.font-hacker {
+  font-family: var(--font-hacker), ui-monospace, monospace;
+}
+
+.gradient-border {
+  border: 1px solid transparent;
+  background:
+    radial-gradient(circle at top left, hsl(222.2 84% 60%), transparent 55%),
+    radial-gradient(circle at bottom right, hsl(210 40% 98%), transparent 55%),
+    linear-gradient(hsl(var(--border)), hsl(var(--border)));
+  background-origin: border-box;
+  background-clip: padding-box, border-box, border-box;
 }
