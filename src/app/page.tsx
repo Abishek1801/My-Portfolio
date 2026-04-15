@@ -6,6 +6,8 @@ import { ProjectCard, ProjectTag } from "@/components/project-card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+const revealEase = [0.16, 1, 0.3, 1] as const;
+
 const revealUp = {
   hidden: { opacity: 0, y: 24 },
   visible: (delay: number = 0) => ({
@@ -14,7 +16,7 @@ const revealUp = {
     transition: {
       duration: 0.55,
       delay,
-      ease: [0.16, 1, 0.3, 1],
+      ease: revealEase,
     },
   }),
 };
@@ -30,6 +32,17 @@ type Project = {
 };
 
 const projects: Project[] = [
+  {
+    title: "NavigateASU",
+    description:
+      "Designed an AI academic advisor for ASU students, especially FSGs, to support academic decision-making and connect them with mentors and alumni in their field.",
+    tags: ["Full-Stack"],
+    stack: "RAG / AI / LLMs",
+    impact:
+      "Turned a campus-focused idea into a live, accessible project with both source code and deployed demo.",
+    github: "https://github.com/hackathon-asu/FG-Hackathon.git",
+    demo: "https://navigateasu.vercel.app/",
+  },
   {
     title: "search-pipeline.exe",
     description:
