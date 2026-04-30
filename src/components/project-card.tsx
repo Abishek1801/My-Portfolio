@@ -1,4 +1,6 @@
-import { Github, ExternalLink, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Github, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -30,17 +32,32 @@ export function ProjectCard({
   github,
   demo,
 }: ProjectCardProps) {
+  const [notice, setNotice] = useState<string | null>(null);
+  const isUnavailable = (href?: string) => !href || href === "#";
+
+  useEffect(() => {
+    if (!notice) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setNotice(null);
+    }, 2200);
+
+    return () => window.clearTimeout(timer);
+  }, [notice]);
+
+  const showUnavailableNotice = () => {
+    setNotice("Sorry, this link is not available right now due to API or deployment limitations.");
+  };
+
   return (
     <Card className="project-terminal-card group flex h-full flex-col justify-between">
       <CardHeader className="space-y-4">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
           <CardTitle className="font-hacker text-lg font-semibold uppercase tracking-[0.08em] text-primary">
             {title}
           </CardTitle>
-          <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[10px] uppercase tracking-[0.22em] text-primary">
-            <Sparkles className="h-3 w-3" />
-            live
-          </span>
         </div>
         <CardDescription className="text-sm leading-7 text-foreground/65">
           {description}
@@ -75,19 +92,57 @@ export function ProjectCard({
         </div>
       </CardContent>
 
-      <CardFooter className="mt-auto flex items-center gap-2 pt-2">
+      <CardFooter className="mt-auto flex flex-col items-start gap-3 pt-2">
+        <div className="flex items-center gap-2">
         {github && (
-          <a href={github} target="_blank" rel="noreferrer" className="terminal-card-button">
+          <a
+            href={isUnavailable(github) ? undefined : github}
+            target={isUnavailable(github) ? undefined : "_blank"}
+            rel={isUnavailable(github) ? undefined : "noreferrer"}
+            className="terminal-card-button"
+            onClick={(event) => {
+              if (isUnavailable(github)) {
+                event.preventDefault();
+                showUnavailableNotice();
+              }
+            }}
+          >
             <Github className="h-3.5 w-3.5" />
             GitHub
           </a>
         )}
         {demo && (
-          <a href={demo} target="_blank" rel="noreferrer" className="terminal-card-button">
+          <a
+            href={isUnavailable(demo) ? undefined : demo}
+            target={isUnavailable(demo) ? undefined : "_blank"}
+            rel={isUnavailable(demo) ? undefined : "noreferrer"}
+            className="terminal-card-button"
+            onClick={(event) => {
+              if (isUnavailable(demo)) {
+                event.preventDefault();
+                showUnavailableNotice();
+              }
+            }}
+          >
             <ExternalLink className="h-3.5 w-3.5" />
             Demo
           </a>
         )}
+        </div>
+        <AnimatePresence mode="wait">
+          {notice ? (
+            <motion.p
+              key={notice}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.2 }}
+              className="text-xs leading-5 text-foreground/55"
+            >
+              {notice}
+            </motion.p>
+          ) : null}
+        </AnimatePresence>
       </CardFooter>
     </Card>
   );

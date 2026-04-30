@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ProjectCard, ProjectTag } from "@/components/project-card";
@@ -44,36 +45,25 @@ const projects: Project[] = [
     demo: "https://navigateasu.vercel.app/",
   },
   {
-    title: "search-pipeline.exe",
+    title: "AutoResearch Multi-Agent System",
     description:
-      "Full-text retrieval system built for fast indexing, tuned queries, and low-latency product discovery.",
-    tags: ["Full-Stack"],
-    stack: "Elasticsearch / Flask / Python / Docker / Kibana",
+      "Built a multi-agent research pipeline that turns a plain-English question into a structured Markdown report through planning, retrieval, summarization, critique, and final synthesis.",
+    tags: ["Agentic AI"],
+    stack: "Python / OpenAI API / Multi-Agent Orchestration / JSON Pipelines / Wikipedia API",
     impact:
-      "Improved search quality through relevance-focused iteration and scalable indexing design.",
-    github: "#",
-    demo: "#",
+      "Designed a clean, inspectable workflow with structured agent handoffs, reproducible traces, and a critic loop for stronger coverage and more reliable outputs.",
+    github: "https://github.com/Abishek1801/AutoResearch-Multi-Agent-System-",
+    demo: "https://autoresearcher-mas.vercel.app/",
   },
   {
-    title: "stance-detection.model",
+    title: "Supermarket Navigator",
     description:
-      "NLP workflow for classifying stance, perspective, and intent across claims and short-form text.",
+      "Designed a navigation-focused project to help users move through supermarket spaces more efficiently with a smoother, more guided shopping experience.",
     tags: ["Full-Stack"],
-    stack: "Python / Transformers / PyTorch / Scikit-learn",
+    stack: "Navigation Systems / Full-Stack Development / User Experience Design",
     impact:
-      "Built clean training, evaluation, and error-analysis loops for faster model iteration.",
-    github: "#",
-    demo: "#",
-  },
-  {
-    title: "asu-sol-cluster.ops",
-    description:
-      "HPC-scale ML experimentation designed around throughput, reproducibility, checkpointing, and debugging.",
-    tags: ["Agentic AI", "Computer Vision"],
-    stack: "Slurm / PyTorch / CUDA / Singularity / Bash / tmux",
-    impact:
-      "Made shared-cluster training workflows reliable for long-running research workloads.",
-    github: "#",
+      "Built the project around practical usability and real-world movement challenges, with the project link to be added soon.",
+    github: "https://github.com/Abishek1801/supermarket-navigator.git",
     demo: "#",
   },
 ];
@@ -81,18 +71,18 @@ const projects: Project[] = [
 const notes = [
   {
     label: "agent-logs.md",
-    title: "Practical tool-using agents",
-    body: "Why structured tool traces matter more than raw model size when you need debuggability.",
+    title: "Exploring the TAU Benchmark",
+    body: "I researched the TAU Benchmark to better understand how modern agents are evaluated, and it pushed me to think more deeply about reliability, reasoning, and real-world performance.",
   },
   {
     label: "retrieval.txt",
-    title: "When BM25 beats embeddings",
-    body: "A pragmatic retrieval stack for query-aware routing, offline evaluation, and hybrid search quality.",
+    title: "Building Better Mobile Agents",
+    body: "I worked on mobile agent benchmarks and built an improved agent, which strengthened my interest in making agents more capable, adaptive, and effective in dynamic environments.",
   },
   {
     label: "cluster-handbook.sh",
-    title: "Running LLM workloads on shared infrastructure",
-    body: "Lessons from fitting agent-style workloads onto schedulers without losing observability.",
+    title: "Researching World Models",
+    body: "I am actively exploring world models and how they can help agents plan, predict, and interact more intelligently, a direction that excites me as a student researcher.",
   },
 ];
 
@@ -103,11 +93,11 @@ const skills = [
   },
   {
     name: "ml_stack",
-    value: "PyTorch, TensorFlow, Transformers, OpenCV, YOLO, Scikit-learn",
+    value: "PyTorch, TensorFlow, Hugging Face Transformers, LLM Fine-tuning, RAG Pipelines, Agentic AI, Computer Vision",
   },
   {
     name: "systems",
-    value: "Docker, Linux CLI, Git/GitHub, PostgreSQL, MySQL, Postman",
+    value: "Docker, Linux CLI, Git/GitHub, CUDA, Slurm, HPC Clusters, Vector Databases, API Integration",
   },
 ];
 
@@ -161,10 +151,58 @@ function TerminalSection({
 }
 
 export default function Home() {
-  const handleContactSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [contactStatus, setContactStatus] = useState<{
+    state: "idle" | "sending" | "success" | "error";
+    message: string;
+  }>({
+    state: "idle",
+    message: "",
+  });
+
+  const handleContactSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
-    if (typeof window !== "undefined") {
-      window.alert("Transmission received. I’ll get back to you shortly.");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const context = String(formData.get("context") ?? "").trim();
+
+    try {
+      setContactStatus({
+        state: "sending",
+        message: "Transmitting message...",
+      });
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message: context,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      form.reset();
+      setContactStatus({
+        state: "success",
+        message: "Transmission complete. Your message has been sent directly.",
+      });
+    } catch {
+      setContactStatus({
+        state: "error",
+        message:
+          "Transmission failed. Please try again in a moment or contact me directly.",
+      });
     }
   };
 
@@ -444,9 +482,29 @@ export default function Home() {
               />
             </div>
             <div className="sm:col-span-2 flex justify-end">
-              <Button type="submit" size="md" className="terminal-submit">
-                Execute Transmission
-              </Button>
+              <div className="flex max-w-md flex-col items-end gap-2">
+                <Button
+                  type="submit"
+                  size="md"
+                  className="terminal-submit"
+                  disabled={contactStatus.state === "sending"}
+                >
+                  {contactStatus.state === "sending"
+                    ? "Transmitting..."
+                    : "Execute Transmission"}
+                </Button>
+                {contactStatus.message ? (
+                  <p
+                    className={`text-right text-xs leading-5 ${
+                      contactStatus.state === "error"
+                        ? "text-red-400"
+                        : "text-foreground/62"
+                    }`}
+                  >
+                    {contactStatus.message}
+                  </p>
+                ) : null}
+              </div>
             </div>
           </motion.form>
         </div>
