@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { Bot } from "lucide-react";
 
 const doorTransition = {
   duration: 1.5,
@@ -16,22 +15,13 @@ export function HeroIntro({
   open: boolean;
   onDone: () => void;
 }) {
-  const [phase, setPhase] = useState<"doors" | "ask" | "granted" | "exiting">(
-    "doors"
-  );
-  const [answer, setAnswer] = useState("");
+  const [phase, setPhase] = useState<"doors" | "exiting">("doors");
 
   const handleDoorsComplete = () => {
-    setPhase("ask");
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPhase("granted");
     setTimeout(() => {
       setPhase("exiting");
       setTimeout(onDone, 500);
-    }, 2200);
+    }, 250);
   };
 
   return (
@@ -47,7 +37,7 @@ export function HeroIntro({
           }}
           exit={{ opacity: 0, transition: { duration: 0.35 } }}
         >
-          {/* Door panels — open first, then question appears */}
+          {/* Door panels open, then the intro fades away */}
           <motion.div
             className="pointer-events-none absolute inset-0"
             initial="closed"
@@ -100,107 +90,6 @@ export function HeroIntro({
               <DoorDetails side="right" />
             </motion.div>
           </motion.div>
-
-          {/* Robot + question (after doors open) and Access Granted */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
-            <AnimatePresence mode="wait">
-              {phase === "ask" && (
-                <motion.div
-                  key="ask"
-                  className="flex w-full max-w-md flex-col items-center text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <motion.div
-                    className="mb-8"
-                    animate={{
-                      y: [0, -6, 0],
-                      rotate: [0, 1, -1, 0],
-                    }}
-                    transition={{
-                      duration: 2.5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <Bot
-                      className="h-24 w-24 text-slate-400"
-                      strokeWidth={1.5}
-                      aria-hidden
-                    />
-                  </motion.div>
-
-                  <motion.p
-                    className="mb-6 font-mono text-lg tracking-wide text-slate-300"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    Who are you?
-                  </motion.p>
-
-                  <form onSubmit={handleSubmit} className="w-full">
-                    <input
-                      type="text"
-                      value={answer}
-                      onChange={(e) => setAnswer(e.target.value)}
-                      placeholder="Type anything..."
-                      className="w-full rounded-lg border border-slate-600 bg-slate-900/80 px-4 py-3 font-mono text-sm text-slate-200 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-                      autoFocus
-                      autoComplete="off"
-                    />
-                    <motion.button
-                      type="submit"
-                      className="mt-4 w-full rounded-lg bg-slate-700/60 py-3 font-mono text-sm font-medium text-slate-200 transition-colors hover:bg-slate-600/60"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      Submit
-                    </motion.button>
-                  </form>
-                </motion.div>
-              )}
-
-              {phase === "granted" && (
-                <motion.div
-                  key="granted"
-                  className="flex flex-col items-center justify-center"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                    transition: {
-                      type: "spring",
-                      damping: 18,
-                      stiffness: 120,
-                    },
-                  }}
-                >
-                  <motion.p
-                    className="font-hacker text-4xl font-bold tracking-[0.35em] text-green-400 sm:text-5xl md:text-7xl"
-                    style={{
-                      textShadow:
-                        "0 0 20px rgba(74, 222, 128, 0.6), 0 0 40px rgba(74, 222, 128, 0.3)",
-                    }}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 }}
-                  >
-                    ACCESS GRANTED
-                  </motion.p>
-                  <motion.div
-                    className="mt-4 h-1 w-32 rounded-full bg-green-400/60"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 0.4, duration: 0.6 }}
-                    style={{ transformOrigin: "center" }}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
         </motion.div>
       ) : null}
     </AnimatePresence>

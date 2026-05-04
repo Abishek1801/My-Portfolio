@@ -33,7 +33,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className="dark"
+      style={{ colorScheme: "dark" }}
+      suppressHydrationWarning
+    >
       <body className={`${geistSans.variable} ${geistMono.variable} ${shareTechMono.variable}`}>
         <ThemeProvider>
           <div className="min-h-screen bg-background text-foreground">
