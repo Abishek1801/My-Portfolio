@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ProjectCard, ProjectTag } from "@/components/project-card";
+import type { ProjectCardProps } from "@/components/project-card";
+import { ProjectCarousel } from "@/components/project-carousel";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -22,17 +24,25 @@ const revealUp = {
   }),
 };
 
-type Project = {
-  title: string;
-  description: string;
-  tags: ProjectTag[];
-  stack: string;
-  impact: string;
-  github?: string;
-  demo?: string;
-};
-
-const projects: Project[] = [
+const projects: ProjectCardProps[] = [
+  {
+    title: "Tau-Bench Multi-Agent Tool-Use Agent",
+    description:
+      "Built a planner, executor, and validator multi-agent system for Tau-Bench, where an agent chats with a simulated customer and makes irreversible database changes under airline policy.",
+    tags: ["Agentic AI"],
+    stack: "Python / vLLM / Qwen3 / SLURM / Intel Gaudi",
+    impact:
+      "Raised pass^1 from 28% to 36% and pass^3 from 14% to 26% over the same Qwen3-Coder-30B tool-calling baseline, with a deterministic validator that blocks hallucinated IDs at zero extra LLM calls.",
+  },
+  {
+    title: "Chest X-ray Foundation Models",
+    description:
+      "ASU research pretraining and benchmarking medical imaging foundation models: Ark+ (Swin-B, teacher-student distillation) on 112K ChestX-ray14 images and Foundation X+ for pneumothorax.",
+    tags: ["Computer Vision"],
+    stack: "PyTorch / Swin / ViT / DINO + UperNet / SLURM / A100 + Intel Gaudi",
+    impact:
+      "Beat published MedMNIST v2 baselines on VesselMNIST3D (0.937 vs 0.907 AUC) and NoduleMNIST3D (0.872 vs 0.828), and reached 87.6 Dice on CANDID-PTX with a single multi-task model.",
+  },
   {
     title: "NavigateASU",
     description:
@@ -64,42 +74,93 @@ const projects: Project[] = [
     impact:
       "Built the project around practical usability and real-world movement challenges, with the project link to be added soon.",
     github: "https://github.com/Abishek1801/supermarket-navigator.git",
-    demo: "#",
+  },
+];
+
+const experience = [
+  {
+    time: "2026.06 -> 2026.08",
+    role: "AI Engineering Intern / Selfmadee.ai",
+    points: [
+      "Audited all 43 AI features across 9 product modules of a multi-tenant SaaS platform and recommended keeping 32, merging 4, deprecating 3, and removing 4.",
+      "Proposed a 3-phase switch from GPT to AWS Bedrock Llama models, projected to cut monthly AI cost 64% ($329 to $119 at 1,000 chats a day).",
+      "Shipped an Instagram and Facebook analytics dashboard to production (React, TypeScript, Supabase, Meta Graph API) and a scheduled posting engine on pg_cron and Deno edge functions.",
+      "Found a data-isolation flaw that could expose one customer's records to another, wrote the fix plan, and built features with Claude Code backed by a knowledge graph of the 200+ function codebase.",
+    ],
+  },
+  {
+    time: "2025.08 -> 2027.05",
+    role: "M.S. Computer Science / Arizona State University",
+    points: [
+      "GPA 3.72/4.0. Coursework in Foundation Models & Medical Imaging, Agentic AI, and Statistical ML.",
+      "Training medical imaging models on ASU's Sol cluster (A100 GPUs and Intel Gaudi accelerators).",
+    ],
+  },
+  {
+    time: "2025.02 -> 2025.05",
+    role: "Python Developer Intern / Jireh Software Solutions",
+    points: [
+      "Built an employee activity analyzer solo in ~6 weeks that read ~320 screenshots a day across 8 employees and sorted time into 9 activity types (EasyOCR + GPT-4 API).",
+      "Cut my manager's daily review time from ~1.5 hours to ~10 minutes; the tool fed his reports to the CTO and stayed in daily use after handoff.",
+      "Compared open-source chat LLMs for a client's art e-commerce marketplace and deployed Qwen2.5-7B with vLLM.",
+    ],
+  },
+  {
+    time: "graduated 2025.06",
+    role: "Bachelor's in Computer Science / Dayananda Sagar University",
+    points: ["Bangalore, India."],
+  },
+  {
+    time: "2025.08 -> present",
+    role: "AI Society Member / Tempe",
+    points: [
+      "Staying active in practical AI discussions, events, and modern agentic-system thinking.",
+    ],
   },
 ];
 
 const notes = [
   {
-    label: "agent-logs.md",
-    title: "Exploring the TAU Benchmark",
-    body: "I researched the TAU Benchmark to better understand how modern agents are evaluated, and it pushed me to think more deeply about reliability, reasoning, and real-world performance.",
+    label: "ark-plus.log",
+    title: "Chest X-ray Foundation Models",
+    body: "Pretrained Ark+ on 112K ChestX-ray14 images and replicated 3 CycliST experiments on Intel Gaudi2, showing joint per-site training beats isolated specialists by +4.5 AUC, and traced a 7 to 8 point gap to a likely learning-rate scheduler bug.",
   },
   {
-    label: "retrieval.txt",
-    title: "Building Better Mobile Agents",
-    body: "I worked on mobile agent benchmarks and built an improved agent, which strengthened my interest in making agents more capable, adaptive, and effective in dynamic environments.",
+    label: "medmnist.md",
+    title: "Beating MedMNIST v2 Baselines",
+    body: "Reproduced MedMNIST v2 with 2D/3D ResNet-50 over 5 runs per dataset: matched OrganMNIST3D (0.993 AUC) and beat the published baselines on NoduleMNIST3D (0.872 vs 0.828) and VesselMNIST3D (0.937 vs 0.907).",
   },
   {
-    label: "cluster-handbook.sh",
-    title: "Researching World Models",
-    body: "I am actively exploring world models and how they can help agents plan, predict, and interact more intelligently, a direction that excites me as a student researcher.",
+    label: "tau-bench-failures.md",
+    title: "Why Tool-Use Agents Fail",
+    body: "Benchmarked Act, ReAct, and function-calling agents across Qwen3 4B to 32B and built an error taxonomy from 150+ failures (hallucinated IDs, scope drift, policy violations, wrong tool for an order's state) that shaped my multi-agent design.",
   },
 ];
 
 const skills = [
   {
     name: "languages",
-    value: "Python, C/C++, Java, SQL, Bash, React.js",
+    value: "Python, C++, Java, JavaScript, TypeScript, SQL",
   },
   {
-    name: "ml_stack",
-    value: "PyTorch, TensorFlow, Hugging Face Transformers, LLM Fine-tuning, RAG Pipelines, Agentic AI, Computer Vision",
+    name: "ml_vision",
+    value: "PyTorch, TensorFlow, Vision Transformers (ViT, Swin), CNNs, Model Training & Evaluation",
   },
   {
-    name: "systems",
-    value: "Docker, Linux CLI, Git/GitHub, CUDA, Slurm, HPC Clusters, Vector Databases, API Integration",
+    name: "genai_agents",
+    value: "Agentic AI, Multi-Agent Systems, LLM APIs (OpenAI, Claude, Gemini), RAG, Embeddings, pgvector, LangChain, vLLM, Hugging Face, Prompt Engineering",
+  },
+  {
+    name: "backend_web",
+    value: "FastAPI, Django, Node.js, React, REST APIs, Supabase (Postgres, Edge Functions, Row-Level Security), Streamlit, JWT Auth",
+  },
+  {
+    name: "data_infra",
+    value: "PostgreSQL, MongoDB, pandas, Docker, AWS Bedrock, Linux, Git, pg_cron, SLURM (A100 and Intel Gaudi clusters)",
   },
 ];
+
+const RESUME_URL = "/Abishek-Nagaram-AI-ML-Engineer.pdf";
 
 function TerminalSection({
   id,
@@ -246,11 +307,22 @@ export default function Home() {
                     Abishek
                   </h1>
                   <p className="max-w-2xl text-sm leading-8 text-foreground/72 sm:text-base">
-                    ML and agentic AI developer building search systems, NLP
-                    pipelines, automation workflows, and research-grade training
-                    setups. I like clean interfaces, observable systems, and code
-                    that survives real-world constraints.
+                    AI engineer and M.S. Computer Science student at Arizona State
+                    University (GPA 3.72) who builds production AI features,
+                    multi-agent systems, and trains computer vision models on A100
+                    and Intel Gaudi clusters. Most recently I shipped LLM and full
+                    stack features at Selfmadee.ai and beat published MedMNIST v2
+                    baselines in my ASU research.
                   </p>
+                  <a
+                    href={RESUME_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="terminal-card-button w-fit"
+                  >
+                    <FileDown className="h-3.5 w-3.5" />
+                    Download AI/ML Resume
+                  </a>
                 </motion.div>
 
                 <motion.div
@@ -263,12 +335,12 @@ export default function Home() {
                     <strong>available</strong>
                   </div>
                   <div className="terminal-stat">
-                    <p>mode</p>
-                    <strong>building</strong>
+                    <p>graduating</p>
+                    <strong>may 2027</strong>
                   </div>
                   <div className="terminal-stat">
                     <p>location</p>
-                    <strong>asu / us</strong>
+                    <strong>tempe, az</strong>
                   </div>
                 </motion.div>
               </div>
@@ -303,10 +375,10 @@ export default function Home() {
                       <span className="text-primary">user</span>: abi
                     </p>
                     <p>
-                      <span className="text-primary">role</span>: ml_agentic_ai_dev
+                      <span className="text-primary">role</span>: ai_engineer
                     </p>
                     <p>
-                      <span className="text-primary">focus</span>: search / nlp / systems
+                      <span className="text-primary">focus</span>: agents / vision / full_stack
                     </p>
                     <p>
                       <span className="text-primary">status</span>: actively_coding
@@ -325,19 +397,9 @@ export default function Home() {
         title="[ PROJECT INDEX ]"
       >
         <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/68">
-          Selected builds across retrieval, modeling, and infrastructure.
+          Selected builds across agents, medical imaging, and full-stack products.
         </p>
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.title}
-              variants={revealUp}
-              custom={0.06 * index}
-            >
-              <ProjectCard {...project} />
-            </motion.div>
-          ))}
-        </div>
+        <ProjectCarousel projects={projects} />
       </TerminalSection>
 
       <TerminalSection
@@ -346,26 +408,7 @@ export default function Home() {
         title="[ EXECUTION HISTORY ]"
       >
         <div className="mt-6 space-y-4">
-          {[
-            {
-              time: "2025.02 -> 2025.05",
-              role: "Python Developer Intern / Jireh Software Solutions",
-              body:
-                "Built an AI-based work tracking summarizer using OCR and image similarity detection, with Django features and deployment automation.",
-            },
-            {
-              time: "2025.08 -> present",
-              role: "M.S. Computer Science / Arizona State University",
-              body:
-                "Working across machine learning, deep learning, algorithms, systems, and research workflows.",
-            },
-            {
-              time: "2025.08 -> present",
-              role: "AI Society Member / Tempe",
-              body:
-                "Staying active in practical AI discussions, events, and modern agentic-system thinking.",
-            },
-          ].map((item, index) => (
+          {experience.map((item, index) => (
             <motion.div
               key={item.role}
               variants={revealUp}
@@ -374,7 +417,14 @@ export default function Home() {
             >
               <p className="terminal-log-time">{item.time}</p>
               <h3 className="terminal-log-role">{item.role}</h3>
-              <p className="terminal-log-body">{item.body}</p>
+              <ul className="terminal-log-body space-y-1.5">
+                {item.points.map((point) => (
+                  <li key={point}>
+                    <span className="text-primary/60">&gt; </span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
             </motion.div>
           ))}
         </div>
@@ -429,13 +479,44 @@ export default function Home() {
         <div className="mt-6 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div className="space-y-4">
             <p className="text-sm leading-7 text-foreground/68">
-              If you&apos;re building in ML, agentic systems, automation, or
-              research-heavy product spaces, send a message and let&apos;s talk.
+              If you&apos;re building in AI, agentic systems, computer vision,
+              or full-stack products, send a message and let&apos;s talk.
             </p>
             <div className="terminal-contact-meta">
               <p>response_window=24_48_hours</p>
-              <p>preferred_topics=ml,nlp,systems,agents</p>
+              <p>preferred_topics=agents,cv,llms,full_stack</p>
               <p>signal_quality=high</p>
+              <p>
+                email=
+                <a
+                  href="mailto:anagaram@asu.edu"
+                  className="text-primary/70 hover:text-primary transition-colors"
+                >
+                  anagaram@asu.edu
+                </a>
+              </p>
+              <p>
+                linkedin=
+                <a
+                  href="https://www.linkedin.com/in/abishek-prakash-nagaram"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary/70 hover:text-primary transition-colors"
+                >
+                  abishek-prakash-nagaram
+                </a>
+              </p>
+              <p>
+                resume=
+                <a
+                  href={RESUME_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary/70 hover:text-primary transition-colors"
+                >
+                  ai_ml_engineer.pdf
+                </a>
+              </p>
             </div>
           </div>
 

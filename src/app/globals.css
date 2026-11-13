@@ -436,6 +436,51 @@ body::after {
     0 24px 50px rgba(0, 0, 0, 0.3);
 }
 
+.project-carousel-track {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  padding: 0.5rem 0.25rem 1rem;
+  margin: -0.5rem -0.25rem 0;
+  scrollbar-width: none;
+  cursor: grab;
+}
+
+.project-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.project-carousel-track:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.3);
+  outline-offset: 4px;
+  border-radius: 1.25rem;
+}
+
+.project-carousel-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+.project-carousel-slide {
+  flex: 0 0 88%;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 768px) {
+  .project-carousel-slide {
+    flex-basis: calc((100% - 1.25rem) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .project-carousel-slide {
+    flex-basis: calc((100% - 2.5rem) / 3);
+  }
+}
+
 .terminal-card-button {
   display: inline-flex;
   align-items: center;
