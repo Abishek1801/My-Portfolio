@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import { Github, Linkedin } from "lucide-react";
 
 const NAV_LINKS = [
-  { href: "#projects", label: "projects" },
-  { href: "#experience", label: "experience" },
-  { href: "#skills", label: "skills" },
-  { href: "#research", label: "notes" },
-  { href: "#contact", label: "contact" },
+  { href: "/#projects", label: "projects" },
+  { href: "/#experience", label: "experience" },
+  { href: "/#skills", label: "skills" },
+  { href: "/#research", label: "notes" },
+  { href: "/#contact", label: "contact" },
 ] as const;
 
 export function Header() {

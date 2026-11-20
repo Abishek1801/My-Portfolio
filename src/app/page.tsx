@@ -6,25 +6,23 @@ import { FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ProjectCardProps } from "@/components/project-card";
 import { ProjectCarousel } from "@/components/project-carousel";
+import { TerminalSection, revealUp } from "@/components/terminal-section";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-const revealEase = [0.16, 1, 0.3, 1] as const;
-
-const revealUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (delay: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.55,
-      delay,
-      ease: revealEase,
-    },
-  }),
-};
-
 const projects: ProjectCardProps[] = [
+  {
+    title: "Nova: Voice-First AI Student Assistant",
+    description:
+      "Built in 24 hours at SunHacks 2026 with a 4-person team. Nova pulls together Canvas, Gmail, Google Calendar, LinkedIn and campus news so a student can ask \"what do I need to do today?\" and get one spoken, prioritized answer.",
+    tags: ["Agentic AI", "Backend"],
+    stack: "Python / FastAPI / Playwright (CDP) / MCP / Gemini / OAuth 2.0 / Supermemory / TinyFish",
+    impact:
+      "I built the integration layer and the 31-tool MCP interface the voice agent calls, plus exam prep and long-term memory: ~7 s Canvas sync and ~170 automated tests.",
+    github: "https://github.com/SD170/nova",
+    demo: "https://www.youtube.com/watch?v=FwKEgtw3p_o",
+    caseStudy: "/projects/nova",
+  },
   {
     title: "Tau-Bench Multi-Agent Tool-Use Agent",
     description:
@@ -148,11 +146,11 @@ const skills = [
   },
   {
     name: "genai_agents",
-    value: "Agentic AI, Multi-Agent Systems, LLM APIs (OpenAI, Claude, Gemini), RAG, Embeddings, pgvector, LangChain, vLLM, Hugging Face, Prompt Engineering",
+    value: "Agentic AI, Multi-Agent Systems, LLM APIs (OpenAI, Claude, Gemini), Model Context Protocol (MCP), RAG, Embeddings, pgvector, LangChain, vLLM, Hugging Face, Supermemory, Prompt Engineering",
   },
   {
     name: "backend_web",
-    value: "FastAPI, Django, Node.js, React, REST APIs, Supabase (Postgres, Edge Functions, Row-Level Security), Streamlit, JWT Auth",
+    value: "FastAPI, Django, Node.js, React, REST APIs, Supabase (Postgres, Edge Functions, Row-Level Security), Streamlit, JWT Auth, OAuth 2.0 (Gmail, Calendar APIs), Playwright (CDP), Chrome Extensions (MV3), Electron",
   },
   {
     name: "data_infra",
@@ -161,55 +159,6 @@ const skills = [
 ];
 
 const RESUME_URL = "/Abishek-Nagaram-AI-ML-Engineer.pdf";
-
-function TerminalSection({
-  id,
-  prompt,
-  title,
-  children,
-}: {
-  id: string;
-  prompt: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={revealUp}
-          className="terminal-shell overflow-hidden"
-        >
-          <div className="terminal-topbar">
-            <div className="terminal-lights">
-              <span />
-              <span />
-              <span />
-            </div>
-            <div className="terminal-path">
-              <span className="text-primary">abi@portfolio</span>
-              <span className="text-foreground/50">:</span>
-              <span className="text-foreground/70">~/{id}</span>
-            </div>
-          </div>
-          <div className="terminal-body">
-            <p className="terminal-command">
-              <span className="text-primary">abi@portfolio</span>
-              <span className="text-foreground/50">:~$</span> {prompt}
-            </p>
-            <div className="mt-4">
-              <p className="terminal-section-label">{title}</p>
-              {children}
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
 
 export default function Home() {
   const [contactStatus, setContactStatus] = useState<{
