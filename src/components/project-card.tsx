@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Github, ExternalLink } from "lucide-react";
+import Link from "next/link";
+import { Github, ExternalLink, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -11,7 +12,11 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-export type ProjectTag = "Agentic AI" | "Computer Vision" | "Full-Stack";
+export type ProjectTag =
+  | "Agentic AI"
+  | "Backend"
+  | "Computer Vision"
+  | "Full-Stack";
 
 export interface ProjectCardProps {
   title: string;
@@ -21,6 +26,7 @@ export interface ProjectCardProps {
   impact: string;
   github?: string;
   demo?: string;
+  caseStudy?: string;
 }
 
 export function ProjectCard({
@@ -31,6 +37,7 @@ export function ProjectCard({
   impact,
   github,
   demo,
+  caseStudy,
 }: ProjectCardProps) {
   const [notice, setNotice] = useState<string | null>(null);
   const isUnavailable = (href?: string) => !href || href === "#";
@@ -127,6 +134,12 @@ export function ProjectCard({
             <ExternalLink className="h-3.5 w-3.5" />
             Demo
           </a>
+        )}
+        {caseStudy && (
+          <Link href={caseStudy} className="terminal-card-button">
+            Case Study
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         )}
         </div>
         <AnimatePresence mode="wait">
