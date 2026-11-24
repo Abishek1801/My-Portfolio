@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Github } from "lucide-react";
+import {
+  DiagramArrow,
+  DiagramLegend,
+  DiagramNode,
+} from "@/components/case-study";
 import { TerminalSection } from "@/components/terminal-section";
 
 export const metadata: Metadata = {
@@ -121,32 +126,6 @@ const links = [
   { key: "blog", label: "read the write-up", href: BLOG_URL },
 ].filter((link) => link.href);
 
-function DiagramNode({
-  title,
-  detail,
-  mine = false,
-}: {
-  title: string;
-  detail: string;
-  mine?: boolean;
-}) {
-  return (
-    <div className={`nova-node ${mine ? "nova-node-mine" : "nova-node-team"}`}>
-      <p className="nova-node-title">{title}</p>
-      <p className="nova-node-detail">{detail}</p>
-    </div>
-  );
-}
-
-function DiagramArrow({ label }: { label: string }) {
-  return (
-    <div className="nova-arrow" aria-hidden>
-      <span>↓</span>
-      <span className="nova-arrow-label">{label}</span>
-    </div>
-  );
-}
-
 export default function NovaPage() {
   return (
     <div className="relative pb-12 pt-24 lg:pt-28">
@@ -186,7 +165,7 @@ export default function NovaPage() {
             </p>
             <div className="flex flex-wrap gap-2">
               {["Agentic AI", "Backend"].map((tag) => (
-                <span key={tag} className="nova-chip">
+                <span key={tag} className="case-chip">
                   {tag}
                 </span>
               ))}
@@ -226,7 +205,7 @@ export default function NovaPage() {
               </a>
             </div>
           </div>
-          <div className="nova-video">
+          <div className="case-video">
             <iframe
               src={VIDEO_EMBED_URL}
               title="Nova demo video"
@@ -266,17 +245,10 @@ export default function NovaPage() {
         prompt="tree ./nova --depth 4"
         title="[ ARCHITECTURE ]"
       >
-        <div className="nova-diagram mt-6">
-          <div className="nova-legend">
-            <span>
-              <i className="nova-swatch nova-swatch-mine" /> built by me
-            </span>
-            <span>
-              <i className="nova-swatch nova-swatch-team" /> built by teammates
-            </span>
-          </div>
+        <div className="case-diagram mt-6">
+          <DiagramLegend />
 
-          <div className="nova-row nova-row-2">
+          <div className="case-row case-row-2">
             <DiagramNode
               title="Student"
               detail="speaks to Nova, or uses the desktop app and LinkedIn side panel"
@@ -287,14 +259,14 @@ export default function NovaPage() {
             />
           </div>
           <DiagramArrow label="voice / chat" />
-          <div className="nova-row nova-row-1">
+          <div className="case-row case-row-1">
             <DiagramNode
               title="Orchestrator + Voice"
               detail="chat orchestration and Vapi voice (Saswata)"
             />
           </div>
           <DiagramArrow label="MCP over Cloudflare tunnels, key-protected" />
-          <div className="nova-row nova-row-2">
+          <div className="case-row case-row-2">
             <DiagramNode
               mine
               title="Canvas MCP server"
@@ -307,7 +279,7 @@ export default function NovaPage() {
             />
           </div>
           <DiagramArrow label="service calls" />
-          <div className="nova-row nova-row-5">
+          <div className="case-row case-row-5">
             <DiagramNode
               mine
               title="Canvas agent"
@@ -334,7 +306,7 @@ export default function NovaPage() {
             />
           </div>
           <DiagramArrow label="read-only access" />
-          <div className="nova-row nova-row-5">
+          <div className="case-row case-row-5">
             <DiagramNode
               title="Canvas JSON API"
               detail="student's own session via TinyFish + Playwright (CDP)"
@@ -444,7 +416,7 @@ export default function NovaPage() {
       >
         <div className="mt-6 flex flex-wrap gap-2">
           {stack.map((item) => (
-            <span key={item} className="nova-chip">
+            <span key={item} className="case-chip">
               {item}
             </span>
           ))}

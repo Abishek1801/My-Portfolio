@@ -12,6 +12,18 @@ import { Textarea } from "@/components/ui/textarea";
 
 const projects: ProjectCardProps[] = [
   {
+    title: "Verity Care",
+    description:
+      "Built in one day at VillageHacks '26 Lite, ASU, with a 2-engineer team. Verity Care follows the money in US nursing homes: it flags homes that overpay suppliers secretly owned by the same people, and lets families see photo-verified, tamper-evident proof that care was delivered.",
+    tags: ["Backend", "Full-Stack"],
+    stack: "Python / FastAPI / Pydantic / JSON Schema / pytest / SQLite / Alpine.js / vis-network / CMS NADAC API",
+    impact:
+      "I built the SPEND fraud engine (3 explainable signals that turn a home red only when all three agree, 18 passing tests) and the family + staff proof-of-care apps on 14 care endpoints.",
+    github: "https://github.com/Cerluain/Verity-Care",
+    demo: "https://youtu.be/1mmR9n13i_k",
+    caseStudy: "/projects/verity-care",
+  },
+  {
     title: "Nova: Voice-First AI Student Assistant",
     description:
       "Built in 24 hours at SunHacks 2026 with a 4-person team. Nova pulls together Canvas, Gmail, Google Calendar, LinkedIn and campus news so a student can ask \"what do I need to do today?\" and get one spoken, prioritized answer.",
@@ -150,11 +162,11 @@ const skills = [
   },
   {
     name: "backend_web",
-    value: "FastAPI, Django, Node.js, React, REST APIs, Supabase (Postgres, Edge Functions, Row-Level Security), Streamlit, JWT Auth, OAuth 2.0 (Gmail, Calendar APIs), Playwright (CDP), Chrome Extensions (MV3), Electron",
+    value: "FastAPI, Pydantic, JSON Schema, Django, Node.js, React, Alpine.js, vis-network, REST APIs, Supabase (Postgres, Edge Functions, Row-Level Security), Streamlit, JWT Auth, OAuth 2.0 (Gmail, Calendar APIs), Playwright (CDP), Chrome Extensions (MV3), Electron",
   },
   {
     name: "data_infra",
-    value: "PostgreSQL, MongoDB, pandas, Docker, AWS Bedrock, Linux, Git, pg_cron, SLURM (A100 and Intel Gaudi clusters)",
+    value: "PostgreSQL, SQLite, MongoDB, pandas, Graph Algorithms (BFS), Public Data APIs (CMS NADAC), IPFS, Base Sepolia (Ethereum L2 testnet), Docker, AWS Bedrock, Linux, Git, pg_cron, SLURM (A100 and Intel Gaudi clusters)",
   },
 ];
 
